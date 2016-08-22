@@ -31,10 +31,10 @@ namespace changeprofile_masterpage
                 while (reader.Read())
                 {
                     lblUsers.Text = reader["login"].ToString();
-                    txtFirstName.Value = reader["first_name"].ToString();
-                    txtLastName.Value = reader["last_name"].ToString();
-                    txtPhone.Value = reader["mobile"].ToString();
-                    txtEmail.Value = reader["email"].ToString();
+                    txtFirstName.Text = reader["first_name"].ToString();
+                    txtLastName.Text = reader["last_name"].ToString();
+                    txtPhone.Text = reader["mobile"].ToString();
+                    txtEmail.Text = reader["email"].ToString();
                     int numGender = Convert.ToInt32(reader["gender"]);
                     if (numGender == 1)
                     {
@@ -46,7 +46,7 @@ namespace changeprofile_masterpage
                         ddlGender.SelectedIndex = 2;
                     }
 
-                    txtDOB.Value = Convert.ToDateTime(reader["dob"]).ToString("dd/MM/yyyy");
+                    txtDOB.Text = Convert.ToDateTime(reader["dob"]).ToString("dd/MM/yyyy");
                     string language = reader["lang"].ToString().ToLower();
                     if (language == "0")
                     {
@@ -74,13 +74,13 @@ namespace changeprofile_masterpage
                 connection.Open();
                 string updateQuery = "UPDATE users SET first_name=@first_name,last_name=@last_name,email=@email,dob=@dob,mobile=@mobile,gender=@gender,lang=@lang where login=@login";
                 SqlCommand cmd = new SqlCommand(updateQuery, connection);
-                string dob = Convert.ToDateTime(txtDOB.Value).ToString("yyyy/MM/dd");
+                string dob = Convert.ToDateTime(txtDOB.Text).ToString("yyyy/MM/dd");
                 cmd.Parameters.AddWithValue("@login", lblUsers.Text);
-                cmd.Parameters.AddWithValue("@first_name", txtFirstName.Value);
-                cmd.Parameters.AddWithValue("@last_name", txtLastName.Value);
-                cmd.Parameters.AddWithValue("@email", txtEmail.Value);
+                cmd.Parameters.AddWithValue("@first_name", txtFirstName.Text);
+                cmd.Parameters.AddWithValue("@last_name", txtLastName.Text);
+                cmd.Parameters.AddWithValue("@email", txtEmail.Text);
                 cmd.Parameters.AddWithValue("@dob", dob);
-                cmd.Parameters.AddWithValue("@mobile", txtPhone.Value);
+                cmd.Parameters.AddWithValue("@mobile", txtPhone.Text);
                 cmd.Parameters.AddWithValue("@gender", ddlGender.Value);
                 cmd.Parameters.AddWithValue("@lang", ddlLanguage.Value);
                 cmd.ExecuteNonQuery();
