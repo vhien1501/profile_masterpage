@@ -81,8 +81,8 @@ namespace changeprofile_masterpage
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text);
                 cmd.Parameters.AddWithValue("@dob", dob);
                 cmd.Parameters.AddWithValue("@mobile", txtPhone.Text);
-                cmd.Parameters.AddWithValue("@gender", ddlGender.Value);
-                cmd.Parameters.AddWithValue("@lang", ddlLanguage.Value);
+                cmd.Parameters.AddWithValue("@gender", ddlGender.Text);
+                cmd.Parameters.AddWithValue("@lang", ddlLanguage.Text);
                 cmd.ExecuteNonQuery();
                 connection.Close();
 

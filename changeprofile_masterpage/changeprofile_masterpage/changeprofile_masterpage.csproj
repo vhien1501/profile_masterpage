@@ -186,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCode\DITHelper.cs" />
+    <Compile Include="DITUser.cs" />
     <Compile Include="MasterPage.Master.cs">
       <DependentUpon>MasterPage.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
