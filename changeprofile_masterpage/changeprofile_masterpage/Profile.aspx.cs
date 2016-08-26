@@ -10,41 +10,41 @@ namespace changeprofile_masterpage
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            UpdateData();
+            GetAndSet();
             if (!IsPostBack)
             {
-                
+
                 DITUsers.GetUsersByLogin("minhphat1893");
-                lblUsers.Text= DITUsers.Login;
-                txtFirstName.Text= DITUsers.Firstname;
-                txtLastName.Text = DITUsers.Lastname;
-                txtPhone.Text = DITUsers.Phone;
-                txtEmail.Text = DITUsers.Email ;
-                if (DITUsers.Gender == 1)
+                lblUsers.Text = HQUsersItem.Login;
+                txtFirstName.Text = HQUsersItem.Firstname;
+                txtLastName.Text = HQUsersItem.Lastname;
+                txtPhone.Text = HQUsersItem.Phone;
+                txtEmail.Text = HQUsersItem.Email;
+                if (HQUsersItem.Gender == 1)
                 {
                     ddlGender.SelectedIndex = 1;
 
                 }
-                else if (DITUsers.Gender == 2)
+                else if (HQUsersItem.Gender == 2)
                 {
                     ddlGender.SelectedIndex = 2;
                 }
-                txtDOB.Text = DITUsers.Dob;
-                if (DITUsers.Language == "en")
+                txtDOB.Text = HQUsersItem.Dob;
+                if (HQUsersItem.Language == "en")
                 {
                     ddlLanguage.SelectedIndex = 0;
                 }
-                else if (DITUsers.Language == "ko")
+                else if (HQUsersItem.Language == "ko")
                 {
                     ddlLanguage.SelectedIndex = 1;
                 }
-                else if (DITUsers.Language == "vi")
+                else if (HQUsersItem.Language == "vi")
                 {
                     ddlLanguage.SelectedIndex = 2;
                 }
             }
         }
-       
+
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
@@ -72,14 +72,14 @@ namespace changeprofile_masterpage
                 return;
             }
 
-            if (ddlGender.SelectedIndex==0)
+            if (ddlGender.SelectedIndex == 0)
             {
                 DITHelper.ShowMessage(this, MessageType.Error, "Please choose your gender.");
                 return;
             }
 
 
-            if (DITUsers.SetData(DITUsers.Login, DITUsers.Firstname, DITUsers.Lastname, DITUsers.Phone, DITUsers.Email, DITUsers.Gender, DITUsers.Dob, DITUsers.Language))
+            if (DITUsers.SetData(HQUsersItem.Login, HQUsersItem.Firstname, HQUsersItem.Lastname, HQUsersItem.Phone, HQUsersItem.Email, HQUsersItem.Gender, HQUsersItem.Dob, HQUsersItem.Language))
             {
                 DITHelper.ShowMessage(this, MessageType.Success, "Update successfull!");
             }
@@ -117,7 +117,7 @@ namespace changeprofile_masterpage
                 return;
             }
 
-            if (DITUsers.CheckCurrentPassword(lblUsers.Text,txtCurrentPassword.Text))
+            if (DITUsers.CheckCurrentPassword(lblUsers.Text, txtCurrentPassword.Text))
             {
                 if (txtNewPassword.Text == txtConfirmPassword.Text)
                 {
@@ -140,12 +140,12 @@ namespace changeprofile_masterpage
                 else
                 {
                     DITHelper.ShowMessage(this, MessageType.Error, "Confirm Password Wrong");
-                    
+
                 }
             }
             else
             {
-               
+
                 DITHelper.ShowMessage(this, MessageType.Error, "Current Password Wrong");
             }
         }
@@ -155,16 +155,16 @@ namespace changeprofile_masterpage
             ChangeCurrentPassword();
         }
 
-        private void UpdateData()
+        private void GetAndSet()
         {
-            DITUsers.Login = lblUsers.Text;
-            DITUsers.Firstname = txtFirstName.Text;
-            DITUsers.Lastname = txtLastName.Text;
-            DITUsers.Email = txtEmail.Text;
-            DITUsers.Dob = txtDOB.Text;
-            DITUsers.Phone = txtPhone.Text;
-            DITUsers.Gender = Convert.ToInt32(ddlGender.Text);
-            DITUsers.Language = ddlLanguage.Text;
+            HQUsersItem.Login = lblUsers.Text;
+            HQUsersItem.Firstname = txtFirstName.Text;
+            HQUsersItem.Lastname = txtLastName.Text;
+            HQUsersItem.Email = txtEmail.Text;
+            HQUsersItem.Dob = txtDOB.Text;
+            HQUsersItem.Phone = txtPhone.Text;
+            HQUsersItem.Gender = Convert.ToInt32(ddlGender.SelectedValue);
+            HQUsersItem.Language = ddlLanguage.SelectedValue;
         }
 
     }

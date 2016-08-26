@@ -7,9 +7,9 @@ using DIT;
 
 namespace DIT
 {
-    public class DITUsers
+
+    public class HQUsersItem
     {
-        private static string ConnectionString = "Server=192.168.1.19;Initial Catalog=dev;user id=user;Password=1";
         private static string login;
         private static string firstname;
         private static string lastname;
@@ -122,6 +122,13 @@ namespace DIT
                 language = value;
             }
         }
+    }
+
+    public class DITUsers
+    {
+        private static string ConnectionString = "Server=192.168.1.19;Initial Catalog=dev;user id=user;Password=1";
+
+
 
         public static void GetUsersByLogin(string username)
         {
@@ -136,25 +143,26 @@ namespace DIT
             {
                 while (reader.Read())
                 {
-                    Login = reader["login"].ToString();
-                    Firstname = reader["first_name"].ToString();
-                    Lastname = reader["last_name"].ToString();
-                    Phone = reader["mobile"].ToString();
-                    Email = reader["email"].ToString();
+                    HQUsersItem.Login = reader["login"].ToString();
+                    HQUsersItem.Firstname = reader["first_name"].ToString();
+                    HQUsersItem.Lastname = reader["last_name"].ToString();
+                    HQUsersItem.Phone = reader["mobile"].ToString();
+                    HQUsersItem.Email = reader["email"].ToString();
 
                     if (!reader.IsDBNull(reader.GetOrdinal("gender")))
-                        Gender = Convert.ToInt32(reader["gender"]);
+                        HQUsersItem.Gender = Convert.ToInt32(reader["gender"]);
                     if (!reader.IsDBNull(reader.GetOrdinal("dob")))
-                        Dob = Convert.ToDateTime(reader["dob"]).ToString("dd/MM/yyyy");
+                        HQUsersItem.Dob = Convert.ToDateTime(reader["dob"]).ToString("dd/MM/yyyy");
 
-                    Language = reader["lang"].ToString().ToLower();
-            
+                    HQUsersItem.Language = reader["lang"].ToString().ToLower();
+
                 }
             }
             connection.Close();
         }
 
-        public static bool SetData(string Login, string FirstName, string LastName, string Phone, string Email, int Gender, string DOB, string Language) {
+        public static bool SetData(string Login, string FirstName, string LastName, string Phone, string Email, int Gender, string DOB, string Language)
+        {
             try
             {
                 SqlConnection connection = new SqlConnection(ConnectionString);
@@ -173,24 +181,24 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@login", Login);
                 }
-              
+
 
                 if (FirstName == "")
                 {
                     cmd.Parameters.AddWithValue("@first_name", DBNull.Value);
                 }
-                
-                else 
+
+                else
                 {
                     cmd.Parameters.AddWithValue("@first_name", FirstName);
                 }
-                
+
 
                 if (LastName == "")
                 {
                     cmd.Parameters.AddWithValue("@last_name", DBNull.Value);
                 }
-                else 
+                else
                 {
                     cmd.Parameters.AddWithValue("@last_name", LastName);
                 }
@@ -199,7 +207,7 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@email", DBNull.Value);
                 }
-                else 
+                else
                 {
                     if (CheckEmail(Email, Login))
                     {
@@ -215,17 +223,17 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@dob", DBNull.Value);
                 }
-                else 
+                else
                 {
                     DateTime dob = Convert.ToDateTime(DOB);
-                    cmd.Parameters.AddWithValue("@dob", DOB);
+                    cmd.Parameters.AddWithValue("@dob", dob);
                 }
 
                 if (Phone == "")
                 {
                     cmd.Parameters.AddWithValue("@mobile", DBNull.Value);
                 }
-                else if(Regex.Match(Phone, @"^([0-9]{9,15})$").Success)
+                else if (Regex.Match(Phone, @"^([0-9]{9,15})$").Success)
                 {
                     cmd.Parameters.AddWithValue("@mobile", Phone);
                 }
@@ -234,7 +242,7 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@gender", DBNull.Value);
                 }
-                else if (Gender!=0)
+                else if (Gender != 0)
                 {
                     cmd.Parameters.AddWithValue("@gender", Gender);
                 }
@@ -247,13 +255,6 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@lang", Language);
                 }
-                //cmd.Parameters.AddWithValue("@first_name", firstname);
-                //cmd.Parameters.AddWithValue("@last_name", lastname);
-                //cmd.Parameters.AddWithValue("@email", email);
-                //cmd.Parameters.AddWithValue("@dob", DOB);
-                //cmd.Parameters.AddWithValue("@mobile", phone);
-                //cmd.Parameters.AddWithValue("@gender", gender);
-                //cmd.Parameters.AddWithValue("@lang", language);
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
@@ -308,18 +309,18 @@ namespace DIT
                 {
                     if (reader.HasRows)
                     {
-                        reader.Read();                      
+                        reader.Read();
                         if (!DITHelper.isEmptyString(reader["email"].ToString()))
                         {
                             return true; // not empty = have email value.
-                        }                    
-                    }                 
-                }            
+                        }
+                    }
+                }
             }
             return false;//empty= dont have email value.
         }
-              
-               
+
+
         public static bool CheckCurrentPassword(string login, string currentpassword)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -352,8 +353,6 @@ namespace DIT
             }
             return false;
         }
-
-
         #region Security
         public static string GenerateSalt(int length)
         {
