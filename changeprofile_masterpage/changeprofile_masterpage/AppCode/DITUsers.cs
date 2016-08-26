@@ -2,10 +2,12 @@
 using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using DIT;
 
 namespace DIT
 {
-    public class DITUser
+    public class DITUsers
     {
         private static string ConnectionString = "Server=192.168.1.19;Initial Catalog=dev;user id=user;Password=1";
         public static string Login;
@@ -57,30 +59,34 @@ namespace DIT
                 string updateQuery = "UPDATE users SET first_name=@first_name, last_name=@last_name, email=@email, dob=@dob, mobile=@mobile, gender=@gender, lang=@lang where login=@login";
 
                 SqlCommand cmd = new SqlCommand(updateQuery, connection);
-                
+
 
                 if (login == "")
                 {
                     cmd.Parameters.AddWithValue("@login", DBNull.Value);
                 }
-                else {
+                else
+                {
                     cmd.Parameters.AddWithValue("@login", login);
                 }
+              
 
                 if (firstname == "")
                 {
                     cmd.Parameters.AddWithValue("@first_name", DBNull.Value);
                 }
-                else
+                
+                else if (Regex.Match(firstname, @"^([a-zA-Z]{1,50})$").Success)
                 {
                     cmd.Parameters.AddWithValue("@first_name", firstname);
                 }
+                
 
                 if (lastname == "")
                 {
                     cmd.Parameters.AddWithValue("@last_name", DBNull.Value);
                 }
-                else
+                else if (Regex.Match(firstname, @"^([a-zA-Z]{1,50})$").Success)
                 {
                     cmd.Parameters.AddWithValue("@last_name", lastname);
                 }
@@ -89,19 +95,25 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@email", DBNull.Value);
                 }
-                else
+                else 
                 {
-                    cmd.Parameters.AddWithValue("@email", email);
-                }
+                    if (CheckEmail(email, login))
+                    {
+                    }
 
+                    else if (Regex.Match(email, @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                    @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$").Success)
+                    {
+                        cmd.Parameters.AddWithValue("@email", email);
+                    }
+                }
                 if (dob == "")
                 {
                     cmd.Parameters.AddWithValue("@dob", DBNull.Value);
                 }
-                else
+                else 
                 {
                     DateTime DOB = Convert.ToDateTime(dob);
-
                     cmd.Parameters.AddWithValue("@dob", dob);
                 }
 
@@ -109,7 +121,7 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@mobile", DBNull.Value);
                 }
-                else
+                else if(Regex.Match(phone, @"^([0-9]{9,15})$").Success)
                 {
                     cmd.Parameters.AddWithValue("@mobile", phone);
                 }
@@ -118,7 +130,7 @@ namespace DIT
                 {
                     cmd.Parameters.AddWithValue("@gender", DBNull.Value);
                 }
-                else
+                else if (gender!=0)
                 {
                     cmd.Parameters.AddWithValue("@gender", gender);
                 }
@@ -161,7 +173,6 @@ namespace DIT
                 SqlCommand cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@salt", salt);
                 cmd.Parameters.AddWithValue("@login", login);
-
                 cmd.ExecuteNonQuery();
             }
         }
@@ -171,17 +182,40 @@ namespace DIT
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-
                 string sql = "UPDATE users SET password = @password WHERE login = @login";
-
                 SqlCommand cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@password", password);
                 cmd.Parameters.AddWithValue("@login", login);
-
                 cmd.ExecuteNonQuery();
             }
         }
 
+        public static bool CheckEmail(string myEmail, string userLogin)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string sql = "SELECT email FROM users WHERE login NOT IN (SELECT login FROM users WHERE login=@login) AND email=@email";
+                SqlCommand cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@login", userLogin);
+                cmd.Parameters.AddWithValue("@email", myEmail);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        reader.Read();                      
+                        if (!DITHelper.isEmptyString(reader["email"].ToString()))
+                        {
+                            return true; // not empty = have email value.
+                        }                    
+                    }                 
+                }            
+            }
+            return false;//empty= dont have email value.
+        }
+              
+               
         public static bool CheckCurrentPassword(string login, string currentpassword)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -205,6 +239,7 @@ namespace DIT
 
                             if (reader["password"].ToString() == CurrentPassword)
                             {
+
                                 return true;
                             }
                         }

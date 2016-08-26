@@ -1,5 +1,6 @@
 ﻿using System;
 using DIT;
+using System.Text.RegularExpressions;
 
 namespace changeprofile_masterpage
 {
@@ -11,31 +12,31 @@ namespace changeprofile_masterpage
         {
             if (!IsPostBack)
             {
-                DITUser.LoadDB("minhphat1893");
-                lblUsers.Text= DITUser.Login;
-                txtFirstName.Text= DITUser.FirstName;
-                txtLastName.Text = DITUser.LastName;
-                txtPhone.Text = DITUser.Phone;
-                txtEmail.Text = DITUser.Email ;
-                if (DITUser.Gender == 1)
+                DITUsers.LoadDB("minhphat1893");
+                lblUsers.Text= DITUsers.Login;
+                txtFirstName.Text= DITUsers.FirstName;
+                txtLastName.Text = DITUsers.LastName;
+                txtPhone.Text = DITUsers.Phone;
+                txtEmail.Text = DITUsers.Email ;
+                if (DITUsers.Gender == 1)
                 {
                     ddlGender.SelectedIndex = 1;
 
                 }
-                else if (DITUser.Gender == 2)
+                else if (DITUsers.Gender == 2)
                 {
                     ddlGender.SelectedIndex = 2;
                 }
-                txtDOB.Text = DITUser.DOB;
-                if (DITUser.Language == "0")
+                txtDOB.Text = DITUsers.DOB;
+                if (DITUsers.Language == "0")
                 {
                     ddlLanguage.SelectedIndex = 0;
                 }
-                else if (DITUser.Language == "1")
+                else if (DITUsers.Language == "1")
                 {
                     ddlLanguage.SelectedIndex = 1;
                 }
-                else if (DITUser.Language == "2")
+                else if (DITUsers.Language == "2")
                 {
                     ddlLanguage.SelectedIndex = 2;
                 }
@@ -45,32 +46,40 @@ namespace changeprofile_masterpage
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (DITUser.SetData(lblUsers.Text, txtFirstName.Text, txtLastName.Text, txtPhone.Text, txtEmail.Text, Convert.ToInt32(ddlGender.Text), txtDOB.Text, ddlLanguage.Text))
+
+            if (DITUsers.SetData(lblUsers.Text, txtFirstName.Text, txtLastName.Text, txtPhone.Text, txtEmail.Text, Convert.ToInt32(ddlGender.Text), txtDOB.Text, ddlLanguage.Text))
             {
-                DITHelper.ShowMessage(this, MessageType.Success, "Congrat!");
+                DITHelper.ShowMessage(this, MessageType.Success, "Update successfull!");
             }
             else
             {
-                DITHelper.ShowMessage(this, MessageType.Error, "Fail To Update");
+                if (DITUsers.CheckEmail(txtEmail.Text, lblUsers.Text))
+                {
+                    DITHelper.ShowMessage(this, MessageType.Error, txtEmail.Text + " was used.");
+                }
+                else
+                {
+                    DITHelper.ShowMessage(this, MessageType.Error, "Fail To Update");
+                }
             }
-
         }
+
 
         private void ChangeCurrentPassword()
         {
 
-            if (DITUser.CheckCurrentPassword(lblUsers.Text,txtCurrentPassword.Text))
+            if (DITUsers.CheckCurrentPassword(lblUsers.Text,txtCurrentPassword.Text))
             {
                 if (txtNewPassword.Text == txtConfirmPassword.Text)
                 {
 
                     if (txtConfirmPassword.Text.Length > 6)
                     {
-                        string salt = DITUser.GenerateSalt(SALTSIZE);
-                        DITUser.SetNewSalt(salt, lblUsers.Text);
+                        string salt = DITUsers.GenerateSalt(SALTSIZE);
+                        DITUsers.SetNewSalt(salt, lblUsers.Text);
 
-                        string hash = DITUser.GenerateHash(txtConfirmPassword.Text, salt);
-                        DITUser.SetNewPassword(hash, lblUsers.Text);
+                        string hash = DITUsers.GenerateHash(txtConfirmPassword.Text, salt);
+                        DITUsers.SetNewPassword(hash, lblUsers.Text);
 
                         DITHelper.ShowMessage(this, MessageType.Error, "Success");
                     }
@@ -82,12 +91,12 @@ namespace changeprofile_masterpage
                 else
                 {
                     DITHelper.ShowMessage(this, MessageType.Error, "Confirm Password Wrong");
-                    //ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Confirm Password Wrong');", true);
+                    
                 }
             }
             else
             {
-                //ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Current Password Wrong');", true);
+               
                 DITHelper.ShowMessage(this, MessageType.Error, "Current Password Wrong");
             }
         }
