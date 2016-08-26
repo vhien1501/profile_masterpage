@@ -69,9 +69,9 @@
                                         <label id="lblLanguage" class="col-sm-4 control-label">Language</label>
                                         <div class="col-sm-4">
                                             <asp:DropDownList ID="ddlLanguage" CssClass="form-control input-sm" runat="server">
-                                                <asp:ListItem Value="0">English </asp:ListItem>
-                                                <asp:ListItem Value="1">Korean </asp:ListItem>
-                                                <asp:ListItem Value="2">Vietnamese </asp:ListItem>
+                                                <asp:ListItem Value="en">English </asp:ListItem>
+                                                <asp:ListItem Value="ko">Korean </asp:ListItem>
+                                                <asp:ListItem Value="vi">Vietnamese </asp:ListItem>
                                             </asp:DropDownList>
                                         </div>
                                     </div>
@@ -146,27 +146,11 @@
                }, "Only characters from A-Z");
 
 
-               $('#txtFirstName').rules('add', {
-                   required: true,
-                   regex: "^[a-zA-Z]+$",
-                   messages: {
-                       required: "First name is required."
-                   }
-               });
-
-               $('#txtLastName').rules('add', {
-                   required: true,
-                   regex: "^[a-zA-Z]+$",
-                   messages: {
-                       required: "Last name is required."
-                   }
-               });
-
-
                $('#txtPhone').rules('add', {
-
+                   required:true,
                    number: true,
                    messages: {
+                       required:"Phone is required",
                        number: "Please insert only number."
                    }
                });
@@ -182,11 +166,11 @@
                });
 
 
-               $('#ddlGender').rules('add', {
-                   required: true,
-                   dropdown: true,
+               //$('#ddlGender').rules('add', {
+               //    required: true,
+               //    dropdown: true,
                
-               });
+               //});
 
 
                $('#txtConfirmPassword').rules('add', {

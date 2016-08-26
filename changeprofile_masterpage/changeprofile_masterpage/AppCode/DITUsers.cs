@@ -10,16 +10,120 @@ namespace DIT
     public class DITUsers
     {
         private static string ConnectionString = "Server=192.168.1.19;Initial Catalog=dev;user id=user;Password=1";
-        public static string Login;
-        public static string FirstName;
-        public static string LastName;
-        public static string Phone;
-        public static string Email;
-        public static int Gender;
-        public static string DOB;
-        public static string Language;
+        private static string login;
+        private static string firstname;
+        private static string lastname;
+        private static string phone;
+        private static string email;
+        private static int gender;
+        private static string dob;
+        private static string language;
 
-        public static void LoadDB(string username)
+        public static string Login
+        {
+            get
+            {
+                return login;
+            }
+
+            set
+            {
+                login = value;
+            }
+        }
+
+        public static string Firstname
+        {
+            get
+            {
+                return firstname;
+            }
+
+            set
+            {
+                firstname = value;
+            }
+        }
+
+        public static string Lastname
+        {
+            get
+            {
+                return lastname;
+            }
+
+            set
+            {
+                lastname = value;
+            }
+        }
+
+        public static string Phone
+        {
+            get
+            {
+                return phone;
+            }
+
+            set
+            {
+                phone = value;
+            }
+        }
+
+        public static string Email
+        {
+            get
+            {
+                return email;
+            }
+
+            set
+            {
+                email = value;
+            }
+        }
+
+        public static int Gender
+        {
+            get
+            {
+                return gender;
+            }
+
+            set
+            {
+                gender = value;
+            }
+        }
+
+        public static string Dob
+        {
+            get
+            {
+                return dob;
+            }
+
+            set
+            {
+                dob = value;
+            }
+        }
+
+        public static string Language
+        {
+            get
+            {
+                return language;
+            }
+
+            set
+            {
+                language = value;
+            }
+        }
+
+        public static void GetUsersByLogin(string username)
         {
             SqlConnection connection = new SqlConnection(ConnectionString);
             connection.Open();
@@ -33,15 +137,15 @@ namespace DIT
                 while (reader.Read())
                 {
                     Login = reader["login"].ToString();
-                    FirstName = reader["first_name"].ToString();
-                    LastName = reader["last_name"].ToString();
+                    Firstname = reader["first_name"].ToString();
+                    Lastname = reader["last_name"].ToString();
                     Phone = reader["mobile"].ToString();
                     Email = reader["email"].ToString();
 
                     if (!reader.IsDBNull(reader.GetOrdinal("gender")))
                         Gender = Convert.ToInt32(reader["gender"]);
                     if (!reader.IsDBNull(reader.GetOrdinal("dob")))
-                        DOB = Convert.ToDateTime(reader["dob"]).ToString("dd/MM/yyyy");
+                        Dob = Convert.ToDateTime(reader["dob"]).ToString("dd/MM/yyyy");
 
                     Language = reader["lang"].ToString().ToLower();
             
@@ -50,7 +154,7 @@ namespace DIT
             connection.Close();
         }
 
-        public static bool SetData(string login, string firstname, string lastname, string phone, string email, int gender, string dob, string language) {
+        public static bool SetData(string Login, string FirstName, string LastName, string Phone, string Email, int Gender, string DOB, string Language) {
             try
             {
                 SqlConnection connection = new SqlConnection(ConnectionString);
@@ -61,87 +165,87 @@ namespace DIT
                 SqlCommand cmd = new SqlCommand(updateQuery, connection);
 
 
-                if (login == "")
+                if (Login == "")
                 {
                     cmd.Parameters.AddWithValue("@login", DBNull.Value);
                 }
                 else
                 {
-                    cmd.Parameters.AddWithValue("@login", login);
+                    cmd.Parameters.AddWithValue("@login", Login);
                 }
               
 
-                if (firstname == "")
+                if (FirstName == "")
                 {
                     cmd.Parameters.AddWithValue("@first_name", DBNull.Value);
                 }
                 
-                else if (Regex.Match(firstname, @"^([a-zA-Z]{1,50})$").Success)
+                else 
                 {
-                    cmd.Parameters.AddWithValue("@first_name", firstname);
+                    cmd.Parameters.AddWithValue("@first_name", FirstName);
                 }
                 
 
-                if (lastname == "")
+                if (LastName == "")
                 {
                     cmd.Parameters.AddWithValue("@last_name", DBNull.Value);
                 }
-                else if (Regex.Match(firstname, @"^([a-zA-Z]{1,50})$").Success)
+                else 
                 {
-                    cmd.Parameters.AddWithValue("@last_name", lastname);
+                    cmd.Parameters.AddWithValue("@last_name", LastName);
                 }
 
-                if (email == "")
+                if (Email == "")
                 {
                     cmd.Parameters.AddWithValue("@email", DBNull.Value);
                 }
                 else 
                 {
-                    if (CheckEmail(email, login))
+                    if (CheckEmail(Email, Login))
                     {
                     }
 
-                    else if (Regex.Match(email, @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                    else if (Regex.Match(Email, @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
                     @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$").Success)
                     {
-                        cmd.Parameters.AddWithValue("@email", email);
+                        cmd.Parameters.AddWithValue("@email", Email);
                     }
                 }
-                if (dob == "")
+                if (DOB == "")
                 {
                     cmd.Parameters.AddWithValue("@dob", DBNull.Value);
                 }
                 else 
                 {
-                    DateTime DOB = Convert.ToDateTime(dob);
-                    cmd.Parameters.AddWithValue("@dob", dob);
+                    DateTime dob = Convert.ToDateTime(DOB);
+                    cmd.Parameters.AddWithValue("@dob", DOB);
                 }
 
-                if (phone == "")
+                if (Phone == "")
                 {
                     cmd.Parameters.AddWithValue("@mobile", DBNull.Value);
                 }
-                else if(Regex.Match(phone, @"^([0-9]{9,15})$").Success)
+                else if(Regex.Match(Phone, @"^([0-9]{9,15})$").Success)
                 {
-                    cmd.Parameters.AddWithValue("@mobile", phone);
+                    cmd.Parameters.AddWithValue("@mobile", Phone);
                 }
 
-                if (gender == 0)
+                if (Gender == 0)
                 {
                     cmd.Parameters.AddWithValue("@gender", DBNull.Value);
                 }
-                else if (gender!=0)
+                else if (Gender!=0)
                 {
-                    cmd.Parameters.AddWithValue("@gender", gender);
+                    cmd.Parameters.AddWithValue("@gender", Gender);
                 }
 
-                if (language == "")
+                if (Language == "")
                 {
                     cmd.Parameters.AddWithValue("@lang", DBNull.Value);
                 }
                 else
                 {
-                    cmd.Parameters.AddWithValue("@lang", language);
+                    cmd.Parameters.AddWithValue("@lang", Language);
                 }
                 //cmd.Parameters.AddWithValue("@first_name", firstname);
                 //cmd.Parameters.AddWithValue("@last_name", lastname);

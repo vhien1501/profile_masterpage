@@ -10,12 +10,14 @@ namespace changeprofile_masterpage
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            UpdateData();
             if (!IsPostBack)
             {
-                DITUsers.LoadDB("minhphat1893");
+                
+                DITUsers.GetUsersByLogin("minhphat1893");
                 lblUsers.Text= DITUsers.Login;
-                txtFirstName.Text= DITUsers.FirstName;
-                txtLastName.Text = DITUsers.LastName;
+                txtFirstName.Text= DITUsers.Firstname;
+                txtLastName.Text = DITUsers.Lastname;
                 txtPhone.Text = DITUsers.Phone;
                 txtEmail.Text = DITUsers.Email ;
                 if (DITUsers.Gender == 1)
@@ -27,16 +29,16 @@ namespace changeprofile_masterpage
                 {
                     ddlGender.SelectedIndex = 2;
                 }
-                txtDOB.Text = DITUsers.DOB;
-                if (DITUsers.Language == "0")
+                txtDOB.Text = DITUsers.Dob;
+                if (DITUsers.Language == "en")
                 {
                     ddlLanguage.SelectedIndex = 0;
                 }
-                else if (DITUsers.Language == "1")
+                else if (DITUsers.Language == "ko")
                 {
                     ddlLanguage.SelectedIndex = 1;
                 }
-                else if (DITUsers.Language == "2")
+                else if (DITUsers.Language == "vi")
                 {
                     ddlLanguage.SelectedIndex = 2;
                 }
@@ -46,8 +48,38 @@ namespace changeprofile_masterpage
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
+            if (DITHelper.isEmptyString(txtFirstName.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your first name.");
+                return;
+            }
 
-            if (DITUsers.SetData(lblUsers.Text, txtFirstName.Text, txtLastName.Text, txtPhone.Text, txtEmail.Text, Convert.ToInt32(ddlGender.Text), txtDOB.Text, ddlLanguage.Text))
+            if (DITHelper.isEmptyString(txtLastName.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your last name.");
+                return;
+            }
+
+            if (DITHelper.isEmptyString(txtEmail.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your email.");
+                return;
+            }
+
+            if (DITHelper.isEmptyString(txtPhone.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your phone.");
+                return;
+            }
+
+            if (ddlGender.SelectedIndex==0)
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please choose your gender.");
+                return;
+            }
+
+
+            if (DITUsers.SetData(DITUsers.Login, DITUsers.Firstname, DITUsers.Lastname, DITUsers.Phone, DITUsers.Email, DITUsers.Gender, DITUsers.Dob, DITUsers.Language))
             {
                 DITHelper.ShowMessage(this, MessageType.Success, "Update successfull!");
             }
@@ -67,6 +99,23 @@ namespace changeprofile_masterpage
 
         private void ChangeCurrentPassword()
         {
+            if (DITHelper.isEmptyString(txtCurrentPassword.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your current password.");
+                return;
+            }
+
+            if (DITHelper.isEmptyString(txtNewPassword.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your new password.");
+                return;
+            }
+
+            if (DITHelper.isEmptyString(txtConfirmPassword.Text))
+            {
+                DITHelper.ShowMessage(this, MessageType.Error, "Please insert your confirm password.");
+                return;
+            }
 
             if (DITUsers.CheckCurrentPassword(lblUsers.Text,txtCurrentPassword.Text))
             {
@@ -104,6 +153,18 @@ namespace changeprofile_masterpage
         protected void btnChangePassword_Click(object sender, EventArgs e)
         {
             ChangeCurrentPassword();
+        }
+
+        private void UpdateData()
+        {
+            DITUsers.Login = lblUsers.Text;
+            DITUsers.Firstname = txtFirstName.Text;
+            DITUsers.Lastname = txtLastName.Text;
+            DITUsers.Email = txtEmail.Text;
+            DITUsers.Dob = txtDOB.Text;
+            DITUsers.Phone = txtPhone.Text;
+            DITUsers.Gender = Convert.ToInt32(ddlGender.Text);
+            DITUsers.Language = ddlLanguage.Text;
         }
 
     }
